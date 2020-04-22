@@ -215,7 +215,7 @@ if __name__ == '__main__':
     #Paths for Brats2017 dataset
     path_HGG = glob('Brats2017/Brats17TrainingData/HGG/**')
     path_LGG = glob('Brats2017/Brats17TrainingData/LGG/**')
-    path_all=path_HGG
+    path_all = path_HGG + path_LGG
 
     #shuffle the dataset
     np.random.seed(2022)
@@ -226,7 +226,7 @@ if __name__ == '__main__':
     end=20
     #set the total number of patches
     #this formula extracts approximately 3 patches per slice
-    num_patches=146*(end-start)*3
+    num_patches = 146*(end-start)*3
     #define the size of a patch
     h=128
     w=128 
