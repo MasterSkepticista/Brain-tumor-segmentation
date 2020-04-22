@@ -1,10 +1,11 @@
 # Brain Tumor Segmentation using UNet-2D
 ----
-This fork has edits made in-place for allowing direct training.
-
-Also includes notebook for step-by-step approach.
+This fork has edits made in-place for allowing direct training. Also includes notebook for step-by-step approach.
 
 The model includes 'Dropout' layer. Feel free to test out your own variants in architecture.
+
+To download the dataset zip, head to [Penn Imaging Home](https://ipp.cbica.upenn.edu/) and apply for permissions.
+Paste the Training Data link at the appropriate cell in the notebook.
 
 ----
 ## Fully automatic Brain tumor segmentation
