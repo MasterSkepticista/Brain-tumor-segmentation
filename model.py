@@ -41,14 +41,16 @@ class Unet_model(object):
         return model
 
 
-    def unet(self,inputs, nb_classes=4, start_ch=64, depth=3, inc_rate=2. ,activation='relu', dropout=0.5, batchnorm=True, upconv=True,format_='channels_last'):
+    def unet(self,inputs, nb_classes=4, start_ch=64, depth=3, inc_rate=2. ,activation='relu', dropout=0.2, batchnorm=True, upconv=True,format_='channels_last'):
         """
         the actual u-net architecture
         """
         o = self.level_block(inputs,start_ch, depth, inc_rate,activation, dropout, batchnorm, upconv,format_)
-        o = Dropout(dropout)(o) 
+        o = BatchNormalization()(o)
         #o =  Activation('relu')(o)
         o = PReLU(shared_axes=[1, 2])(o)
+        o = Dropout(dropout)(o) 
+
         o = Conv2D(nb_classes, 1, padding='same',data_format = format_)(o)
         o = Activation('softmax')(o)
         return o
@@ -80,14 +82,16 @@ class Unet_model(object):
         """
         the encoding unit which a residual block
         """
-        n = Dropout(drpout)(m) if bn else n
+        n = BatchNormalization()(m) if bn else n
         #n=  Activation(acti)(n)
         n = PReLU(shared_axes=[1, 2])(n)
-        n = Conv2D(dim, 3, padding='same',data_format = format_)(n)
-                
-        n = Dropout(drpout)(n) if bn else n
+        n = Dropout(drpout)(n)
+
+        n = Conv2D(dim, 3, padding='same',data_format = format_)(n)        
+        n = BatchNormalization()(n) if bn else n
         #n=  Activation(acti)(n)
         n = PReLU(shared_axes=[1, 2])(n)
+        n = Dropout(drpout)(n)
         n = Conv2D(dim, 3, padding='same',data_format =format_ )(n)
 
         n=add([m,n]) 
@@ -102,14 +106,17 @@ class Unet_model(object):
         the decoding unit which a residual block
         """
          
-        n = Dropout(drpout)(m) if bn else n
+        n = BatchNormalization()(m) if bn else n
         #n=  Activation(acti)(n)
-        n=PReLU(shared_axes=[1, 2])(n)
-        n = Conv2D(dim, 3, padding='same',data_format = format_)(n)
+        n = PReLU(shared_axes=[1, 2])(n)
+        n = Dropout(drpout)(n)
 
-        n = Dropout(drpout)(n) if bn else n
+        n = Conv2D(dim, 3, padding='same',data_format = format_)(n)
+        n = BatchNormalization()(n) if bn else n
         #n=  Activation(acti)(n)
-        n=PReLU(shared_axes=[1, 2])(n)
+        n = PReLU(shared_axes=[1, 2])(n)
+        n = Dropout(drpout)(n)
+
         n = Conv2D(dim, 3, padding='same',data_format =format_ )(n)
         
         Save = Conv2D(dim, 1, padding='same',data_format = format_,use_bias=False)(m) 
