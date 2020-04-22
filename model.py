@@ -27,10 +27,10 @@ class Unet_model(object):
         """
         i = Input(shape=self.img_shape)
         #add gaussian noise to the first layer to combat overfitting
-        i_=GaussianNoise(0.01)(i)
+        i_= GaussianNoise(0.01)(i)
 
         i_ = Conv2D(64, 2, padding='same',data_format = 'channels_last')(i_)
-        out=self.unet(inputs=i_)
+        out = self.unet(inputs=i_)
         model = Model(input=i, output=out)
 
         sgd = SGD(lr=0.08, momentum=0.9, decay=5e-6, nesterov=False)
@@ -41,14 +41,14 @@ class Unet_model(object):
         return model
 
 
-    def unet(self,inputs, nb_classes=4, start_ch=64, depth=3, inc_rate=2. ,activation='relu', dropout=0.0, batchnorm=True, upconv=True,format_='channels_last'):
+    def unet(self,inputs, nb_classes=4, start_ch=64, depth=3, inc_rate=2. ,activation='relu', dropout=0.5, batchnorm=True, upconv=True,format_='channels_last'):
         """
         the actual u-net architecture
         """
         o = self.level_block(inputs,start_ch, depth, inc_rate,activation, dropout, batchnorm, upconv,format_)
-        o = BatchNormalization()(o) 
+        o = Dropout(dropout)(o) 
         #o =  Activation('relu')(o)
-        o=PReLU(shared_axes=[1, 2])(o)
+        o = PReLU(shared_axes=[1, 2])(o)
         o = Conv2D(nb_classes, 1, padding='same',data_format = format_)(o)
         o = Activation('softmax')(o)
         return o
@@ -66,7 +66,7 @@ class Unet_model(object):
                 m = Conv2D(dim, 2, padding='same',data_format = format_)(m)
             else:
                 m = Conv2DTranspose(dim, 3, strides=2,padding='same',data_format = format_)(m)
-            n=concatenate([n,m])
+            n = concatenate([n,m])
             #the decoding path
             m = self.res_block_dec(n, 0.0,dim, acti, bn, format_)
         else:
@@ -80,14 +80,14 @@ class Unet_model(object):
         """
         the encoding unit which a residual block
         """
-        n = BatchNormalization()(m) if bn else n
+        n = Dropout(drpout)(m) if bn else n
         #n=  Activation(acti)(n)
-        n=PReLU(shared_axes=[1, 2])(n)
+        n = PReLU(shared_axes=[1, 2])(n)
         n = Conv2D(dim, 3, padding='same',data_format = format_)(n)
                 
-        n = BatchNormalization()(n) if bn else n
+        n = Dropout(drpout)(n) if bn else n
         #n=  Activation(acti)(n)
-        n=PReLU(shared_axes=[1, 2])(n)
+        n = PReLU(shared_axes=[1, 2])(n)
         n = Conv2D(dim, 3, padding='same',data_format =format_ )(n)
 
         n=add([m,n]) 
@@ -102,12 +102,12 @@ class Unet_model(object):
         the decoding unit which a residual block
         """
          
-        n = BatchNormalization()(m) if bn else n
+        n = Dropout(drpout)(m) if bn else n
         #n=  Activation(acti)(n)
         n=PReLU(shared_axes=[1, 2])(n)
         n = Conv2D(dim, 3, padding='same',data_format = format_)(n)
 
-        n = BatchNormalization()(n) if bn else n
+        n = Dropout(drpout)(n) if bn else n
         #n=  Activation(acti)(n)
         n=PReLU(shared_axes=[1, 2])(n)
         n = Conv2D(dim, 3, padding='same',data_format =format_ )(n)

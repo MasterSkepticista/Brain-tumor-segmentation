@@ -47,8 +47,8 @@ class Training(object):
     def fit_unet(self,X33_train,Y_train,X_patches_valid=None,Y_labels_valid=None):
 
         train_generator=self.img_msk_gen(X33_train,Y_train,9999)
-        checkpointer = ModelCheckpoint(filepath='brain_segmentation/ResUnet.{epoch:02d}_{val_loss:.3f}.hdf5', verbose=1)
-        self.model.fit_generator(train_generator,steps_per_epoch=len(X33_train)//self.batch_size,epochs=self.nb_epoch, validation_data=(X_patches_valid,Y_labels_valid),verbose=1, callbacks = [checkpointer,SGDLearningRateTracker()])
+        checkpointer = ModelCheckpoint(filepath='pretrained_weights/ResUnet.{epoch:02d}.hdf5', verbose=1)
+        self.model.fit_generator(train_generator,steps_per_epoch=len(X33_train)//self.batch_size,epochs=self.nb_epoch, verbose=1, callbacks = [checkpointer,SGDLearningRateTracker()])
         #self.model.fit(X33_train,Y_train, epochs=self.nb_epoch,batch_size=self.batch_size,validation_data=(X_patches_valid,Y_labels_valid),verbose=1, callbacks = [checkpointer,SGDLearningRateTracker()])
 
     def img_msk_gen(self,X33_train,Y_train,seed):
@@ -101,28 +101,28 @@ if __name__ == "__main__":
     #set arguments
 
     #reload already trained model to resume training
-    model_to_load="Models/ResUnet.04_0.646.hdf5" 
+    model_to_load="pretrained_weights/ResUnet.epoch_02.hdf5" 
     #save=None
 
     #compile the model
-    brain_seg = Training(batch_size=4,nb_epoch=3,load_model_resume_training=model_to_load)
+    brain_seg = Training(batch_size=4,nb_epoch=6,load_model_resume_training=None)
 
     print("number of trainabale parameters:",brain_seg.model.count_params())
-    #print(brain_seg.model.summary())
-    #plot(brain_seg.model, to_file='model_architecture.png', show_shapes=True)
+    print(brain_seg.model.summary())
+    # plot(brain_seg.model, to_file='model_architecture.png', show_shapes=True)
 
     #load data from disk
     Y_labels=np.load("y_training.npy").astype(np.uint8)
     X_patches=np.load("x_training.npy").astype(np.float32)
-    Y_labels_valid=np.load("y_valid.npy").astype(np.uint8)
-    X_patches_valid=np.load("x_valid.npy").astype(np.float32)
+    # Y_labels_valid=np.load("y_valid.npy").astype(np.uint8)
+    # X_patches_valid=np.load("x_valid.npy").astype(np.float32)
     print("loading patches done\n")
 
     # fit model
-    brain_seg.fit_unet(X_patches,Y_labels,X_patches_valid,Y_labels_valid)#*
+    brain_seg.fit_unet(X_patches,Y_labels)#*
 
-    #if save is not None:
-    #    brain_seg.save_model('models/' + save)
+    # if save is not None:
+    brain_seg.save_model('pretrained_weights/ResUnet_complete.hdf5')
 
 
 
