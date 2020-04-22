@@ -213,8 +213,8 @@ def concatenate ():
 if __name__ == '__main__':
     
     #Paths for Brats2017 dataset
-    path_HGG = glob('Brats2017/Brats17ValidationData/**')
-    # path_LGG = glob('Brats2017/Brats17ValidationData/**')
+    path_HGG = glob('Brats2017/Brats17TrainingData/HGG/**')
+    path_LGG = glob('Brats2017/Brats17TrainingData/LGG/**')
     path_all=path_HGG
 
     #shuffle the dataset
@@ -260,7 +260,7 @@ if __name__ == '__main__':
     print("Size of their correponding targets : ",Y_labels.shape)
 
     #save to disk as npy files
-    np.save( "x_valid",Patches )
-    np.save( "y_valid",Y_labels)
+    np.save( "x_training",Patches )
+    np.save( "y_training",Y_labels)
 
 

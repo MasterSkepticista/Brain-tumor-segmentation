@@ -102,7 +102,6 @@ if __name__ == "__main__":
 
     #reload already trained model to resume training
     model_to_load="pretrained_weights/ResUnet.epoch_02.hdf5" 
-    #save=None
 
     #compile the model
     brain_seg = Training(batch_size=4,nb_epoch=6,load_model_resume_training=None)
@@ -119,9 +118,8 @@ if __name__ == "__main__":
     print("loading patches done\n")
 
     # fit model
-    brain_seg.fit_unet(X_patches,Y_labels)#*
+    brain_seg.fit_unet(X_patches,Y_labels)
 
-    # if save is not None:
     brain_seg.save_model('pretrained_weights/ResUnet_complete.hdf5')
 
 
