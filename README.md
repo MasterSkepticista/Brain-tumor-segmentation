@@ -1,4 +1,13 @@
-# Fully automatic Brain tumor segmentation
+# Brain Tumor Segmentation using UNet-2D
+----
+This fork has edits made in-place for allowing direct training.
+
+Also includes notebook for step-by-step approach.
+
+The model includes 'Dropout' layer. Feel free to test out your own variants in architecture.
+
+----
+## Fully automatic Brain tumor segmentation
 
 ### Brief overview
 
