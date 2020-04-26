@@ -1,4 +1,4 @@
-# Brain Tumor Segmentation using ResUnet-2D
+# Brain Tumor Segmentation 
 ----
 This fork has edits made in-place for allowing direct training. Also includes notebook (recommended Colab) for step-by-step approach.
 The model includes 'Dropout' layer. Feel free to test out your own variants in architecture.
